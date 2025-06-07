@@ -52,12 +52,8 @@ class ReviewController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(int $id)
+    public function update($id)
     {
-        $this->validate(request(), [
-            'status' => 'required|in:approved,disapproved,pending',
-        ]);
-
         Event::dispatch('customer.review.update.before', $id);
 
         $review = $this->productReviewRepository->update([
@@ -66,9 +62,9 @@ class ReviewController extends Controller
 
         Event::dispatch('customer.review.update.after', $review);
 
-        return new JsonResponse([
-            'message' => trans('admin::app.customers.reviews.update-success'),
-        ]);
+         session()->flash('success', trans('admin::app.customers.reviews.update-success', ['name' => 'admin::app.customers.reviews.review']));
+
+         return redirect()->route('admin.customers.customers.review.index');
     }
 
     /**
